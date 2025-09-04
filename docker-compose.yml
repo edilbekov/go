@@ -1,0 +1,121 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./_docker/nginx/Dockerfile
+    container_name: nginx_go
+    ports:
+      - "8000:80"
+    volumes:
+      - ./_docker/nginx/conf.d:/etc/nginx/conf.d/
+    networks:
+      - go
+    restart: unless-stopped
+    depends_on:
+      - go
+
+  mysql:
+    image: mysql:8.2.0
+    container_name: mysql_go
+    restart: always
+    volumes:
+      - ./_docker/data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --log_bin_trust_function_creators=1
+    env_file:
+      - ./_docker/mysql/mysql.env
+    networks:
+      - go
+
+  go:
+    build:
+      context: .
+      dockerfile: ./_docker/go/Dockerfile
+    container_name: go_app
+    volumes:
+      - ./:/var/www/go
+    working_dir: /var/www/go
+    command: ["go", "run", "./app/main.go"]
+    ports:
+      - "8080:8080"
+    networks:
+      - go
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+      - mysql
+
+  redis:
+    image: redis:latest
+    container_name: redis_go
+    ports:
+      - "6379:6379"
+    networks:
+      - go
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_go
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 100000000
+    restart: always
+    ports:
+      - "8081:80"
+    networks:
+      - go
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_go
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - go
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch_go
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.enrollment.enabled=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    networks:
+      - go
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana_go
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana_system
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - go
+
+volumes:
+  db_data:
+  es_data:
+
+networks:
+  go:
+    driver: bridge
