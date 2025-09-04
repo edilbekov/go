@@ -1,12 +1,9 @@
 package main
 
 import (
-	// _ "github.com/go-sql-driver/mysql"
-	// "gorm.io/driver/mysql"
-	// "gorm.io/gorm"
 	"github.com/gin-gonic/gin"
-	// "routes"
 	"github.com/edilbekov/go/app/routes"
+	"github.com/davecgh/go-spew/spew"
 )
 
 type User struct {
@@ -16,10 +13,10 @@ type User struct {
 }
 
 func main() {
-	router := gin.Default()
+	spew.Dump(1)
+	// router := gin.Default()
 
-	// API yo'llarini sozlash uchun alohida funksiyani chaqiramiz
-	routes.SetupRoutes(router)
+	// routes.SetupRoutes(router)
 
-	router.Run(":8080")
+	// router.Run(":8000")
 }

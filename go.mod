@@ -1,4 +1,4 @@
-module myproject
+module github.com/edilbekov/go
 
 go 1.22.2
 
@@ -8,6 +8,7 @@ require (
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.10.1 // indirect
@@ -36,5 +37,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.6.0 // indirect
 	gorm.io/gorm v1.30.2 // indirect
-	module github.com/edilbekov/go
 )

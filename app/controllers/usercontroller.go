@@ -16,15 +16,20 @@ type User struct {
 
 var db *gorm.DB
 var err error
-const dsn = "root:password@tcp(mysql:3306)/testdb?charset=utf8mb4&parseTime=True&loc=Local"
+const dsn = "root:root@tcp(mysql:3306)/go?charset=utf8mb4&parseTime=True&loc=Local"
 
 func init() {
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		fmt.Println("Failed to connect to database:", err)
-		return
-	}
-	db.AutoMigrate(&User{})
+    const dsn = "root:root@tcp(mysql:3306)/go?charset=utf8mb4&parseTime=True&loc=Local"
+
+    var err error
+    db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+    if err != nil {
+        panic(fmt.Sprintf("❌ Database connection failed: %v", err))
+    }
+
+    if err := db.AutoMigrate(&User{}); err != nil {
+        panic(fmt.Sprintf("❌ Migration failed: %v", err))
+    }
 }
 
 func GetUsers(c *gin.Context) {
