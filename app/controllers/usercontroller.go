@@ -19,9 +19,6 @@ var err error
 const dsn = "root:root@tcp(mysql:3306)/go?charset=utf8mb4&parseTime=True&loc=Local"
 
 func init() {
-    const dsn = "root:root@tcp(mysql:3306)/go?charset=utf8mb4&parseTime=True&loc=Local"
-
-    var err error
     db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
     if err != nil {
         panic(fmt.Sprintf("❌ Database connection failed: %v", err))
@@ -38,6 +35,7 @@ func GetUsers(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
+
 	c.JSON(http.StatusOK, users)
 }
 
@@ -58,7 +56,7 @@ func GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	var user User
 	if result := db.First(&user, id); result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found", "mesage": "dwa"})
 		return
 	}
 	c.JSON(http.StatusOK, user)

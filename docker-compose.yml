@@ -31,12 +31,12 @@ services:
   go:
     build:
       context: .
-      dockerfile: ./_docker/go/Dockerfile
+      dockerfile: _docker/go/Dockerfile
     container_name: go_app
     volumes:
-      - ./:/var/www/go
-    working_dir: /var/www/go
-    command: ["go", "run", "./app/main.go"]
+      - .:/app
+    working_dir: /app
+    command: ["air", "-c", ".air.toml"]
     ports:
       - "8080:8080"
     networks:
@@ -82,35 +82,6 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=root
       - RABBITMQ_DEFAULT_PASS=root
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    container_name: elasticsearch_go
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=true
-      - xpack.security.enrollment.enabled=true
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    ports:
-      - "9200:9200"
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-    networks:
-      - go
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.0
-    container_name: kibana_go
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=kibana_system
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - go
 
 volumes:
   db_data:

@@ -1,17 +1,28 @@
 package routes
 
 import (
-	"github.com/edilbekov/go/app/controllers"
+	"github.com/edilbekov/go/app/controllersdaw/controllersdw"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes(router *gin.Engine) {
-	api := router.Group("/api")
+	api := router.Group("/api")dawdaw
+
+	users := api.Group("/users")
 	{
-		api.GET("/users", controllers.GetUsers)
-		api.POST("/users", controllers.CreateUser)
-		api.GET("/users/:id", controllers.GetUserByID)
-		api.PUT("/users/:id", controllers.UpdateUser)
-		api.DELETE("/users/:id", controllers.DeleteUser)
+		users.GET("/", controllerswdaw.GetUsers)
+		users.POST("/", controllers.CreateUser)
+		users.GET("/:id", controllers.GetUserByID)
+		users.PUT("/:id", controllers.UpdateUser)
+		users.DELETE("/:id", controllers.DeleteUser)
+	}
+
+	products := api.Group("/products")
+	{
+		products.GET("/", controllers.GetProducts)
+		// products.POST("/", controllers.CreateProduct)
+		// products.GET("/:id", controllers.GetProductByID)
+		// products.PUT("/:id", controllers.UpdateProduct)
+		// products.DELETE("/:id", controllers.DeleteProduct)
 	}
 }
